@@ -1,5 +1,5 @@
 # TFCS-Helper
-This repository contains to code for a calculator that can be used for analysing systems as taught in the summer course of 2024 in "Technical Foundations of Computer Science". 
+This repository contains the code for a calculator that can be used for analysing systems as taught in the summer course of 2024 in "Technical Foundations of Computer Science" at IMC Krems. 
 ## Error Detection
 This class, ErrorDetection, is designed to calculate error detection and verification in digital communication systems. It contains methods for checksum calculation, error verification, parity bit calculation, and error detection.
 ### Static Methods
