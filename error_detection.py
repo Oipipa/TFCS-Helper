@@ -4,7 +4,13 @@ class ErrorDetection:
 
     @staticmethod
     def binary_addition(a, b, n_bits):
-        result = (int(a, 2) + int(b, 2)) % (1 << n_bits)
+        result = int(a, 2) + int(b, 2)
+        carry = result >> n_bits  # Extract the carry bit(s)
+        result = result & ((1 << n_bits) - 1)  # Keep only the n_bits
+        while carry > 0:  # Continue to add carry bits until there are no more carry bits
+            result += carry
+            carry = result >> n_bits
+            result = result & ((1 << n_bits) - 1)
         return bin(result)[2:].zfill(n_bits)
 
     @staticmethod
@@ -31,11 +37,12 @@ class ErrorDetection:
 
         for block in data_blocks[1:]:
             new_sum = self.binary_addition(sum_result, block, n_bits)
+            print(f"Adding {sum_result} and {block}:")
             self.print_binary_addition(sum_result, block, new_sum)
             sum_result = new_sum
 
         checksum = self.ones_complement(sum_result)
-        print("One's Complement of Sum:")
+        print("One's Complement of Sum (Checksum):")
         print("-----------")
         print(checksum)
         print()
@@ -53,14 +60,16 @@ class ErrorDetection:
 
         for block in data_blocks[1:]:
             new_sum = self.binary_addition(sum_result, block, n_bits)
+            print(f"Adding {sum_result} and {block}:")
             self.print_binary_addition(sum_result, block, new_sum)
             sum_result = new_sum
 
         final_sum = self.binary_addition(sum_result, received_checksum, n_bits)
+        print(f"Adding {sum_result} and received checksum {received_checksum}:")
         self.print_binary_addition(sum_result, received_checksum, final_sum)
 
         result = self.ones_complement(final_sum)
-        print("One's Complement of Sum:")
+        print("One's Complement of Final Sum:")
         print("-----------")
         print(result)
         print()
@@ -72,12 +81,8 @@ class ErrorDetection:
 
     def calculate_parity_bit(self, data):
         count_of_ones = data.count('1')
-        if self.parity_type == 'even':
-            return count_of_ones % 2
-        elif self.parity_type == 'odd':
-            return (count_of_ones + 1) % 2
-        else:
-            raise ValueError("parity_type should be either 'even' or 'odd'")
+        parity_bit = count_of_ones % 2 if self.parity_type == 'even' else (count_of_ones + 1) % 2
+        return parity_bit
 
     def detect_error(self, sender_data, receiver_data):
         calculated_sender_parity = self.calculate_parity_bit(sender_data)
